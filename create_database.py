@@ -20,41 +20,39 @@ def create_db():
             dew DECIMAL (4, 1),
             humidity DECIMAL (4, 1),
             windspeed DECIMAL (4, 1),
-            visibility DECIMAL (4, 1),
+            visibility DECIMAL (4, 1)
         )
     """)
     conn.commit()
 
-    #equibase table
+    #equibase tables
     conn.execute("""
         CREATE TABLE IF NOT EXISTS racedata
         (
             raceid INTEGER PRIMARY KEY AUTOINCREMENT,
-            track_name VARCHAR(150),
+            racetype VARCHAR(120),
             location VARCHAR(120),
             date DATETIME NOT NULL,
             winner_name VARCHAR(150), 
-            racetime_minutes INTEGER,
-            track_type VARCHAR(120)
+            racetime_minutes INTEGER
+        )
+    """)
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS race_track_info
+        (
+            raceid INTEGER, 
+            track_type VARCHAR(120),
+            track_name VARCHAR(150),
+            FOREIGN KEY(raceid) REFERENCES racedata(raceid) ON DELETE CASCADE
         )
     """)
     conn.commit()
 
     #racing API table
 
-
-    #wikipedia table - Mengyi I just put this in for now so i could do my weather data but feel free to change!
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS race_locations
-        (
-            location_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            track_name VARCHAR(150),
-            city VARCHAR(150),
-            state VARCHAR(120)
-        )
-    """)
+    #wikipedia table
     
-
     conn.close() #close connection after creating and committing each table creation
 
 if __name__ == "__main__":
