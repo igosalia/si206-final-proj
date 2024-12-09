@@ -6,15 +6,13 @@ def create_db():
     conn = sqlite3.connect(database_path)
     #create tables for each of our APIs/websites:
 
-    #TODO: can have a race id foreign key thing that correlates in the equibase table, 
-    # racing API table, and the weather api table so we can use this for calculations and database JOINS
-
     #weather api table
     conn.execute("""
         CREATE TABLE IF NOT EXISTS weather
         (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             location VARCHAR(120),
+            track_name VARCHAR(150),
             date DATETIME NOT NULL,
             temperature DECIMAL (4, 1),
             dew DECIMAL (4, 1),
@@ -25,7 +23,7 @@ def create_db():
     """)
     conn.commit()
 
-    #equibase tables
+    #racing API data tables
     conn.execute("""
         CREATE TABLE IF NOT EXISTS racedata
         (
@@ -48,10 +46,6 @@ def create_db():
         )
     """)
     conn.commit()
-
-    #racing API table
-
-    #wikipedia table
     
     conn.close() #close connection after creating and committing each table creation
 
