@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import sqlite3
+import re
 
 #weather API uses state abbreviations, matched here for consistency
 state_abbreviations = {
@@ -50,9 +51,14 @@ def scrape_wikipedia(url):
             print(f"Found state: {state}")
         if next_element.name == 'ul':
             for li in next_element.find_all('li'):
+                pattern = r'\([^)]*\)|\[.*\]'
                 venue = li.get_text()
-                print(f"Found venue: {venue}")
-                active_us_venues.append(f"{venue}, {state}")
+                venue = re.sub(pattern, '', venue).split(", ")
+                if len(venue) >= 2:
+                    venue_name = venue[0]
+                    venue_city = venue[-1]
+                    print(f"Found venue: {venue_name}, {venue_city}")
+                    active_us_venues.append(f"{venue_name}, {venue_city}, {state}")
         next_element = next_element.find_next()
     
     return active_us_venues
