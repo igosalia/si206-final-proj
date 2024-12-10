@@ -64,5 +64,6 @@ def scrape_wikipedia(url):
 
 url = "https://en.wikipedia.org/wiki/List_of_horse_racing_venues"
 venues = scrape_wikipedia(url)
+print(len(venues))
 for venue in venues:
     print(venue)
