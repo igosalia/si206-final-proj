@@ -48,39 +48,19 @@ def scrape_wikipedia(url):
             break
         if next_element.name == 'h4':
             state = next_element.get_text()
-            print(f"Found state: {state}")
+            state_abbr = state_abbreviations.get(state, '')
         if next_element.name == 'ul':
             for li in next_element.find_all('li'):
-                pattern = r'\([^)]*\)|\[.*\]'
+                pattern = r'\([^)]*\)|\[.*\]|Racetrack|Race.Course'
                 venue = li.get_text()
                 venue = re.sub(pattern, '', venue).split(", ")
                 if len(venue) >= 2:
                     venue_name = venue[0]
                     venue_city = venue[-1]
-                    print(f"Found venue: {venue_name}, {venue_city}")
-                    active_us_venues.append(f"{venue_name}, {venue_city}, {state}")
+                    active_us_venues.append(f"{venue_name}, {venue_city}, {state_abbr}, United States")
         next_element = next_element.find_next()
     
     return active_us_venues
-    """    print(next_element)
-        if next_element.get('class') == ['mw-heading mw-heading4']:
-            state = next_element.find('h4').get_text(strip=True)
-            state_abbreviated = state_abbreviations.get(state, '')
-            print(state_abbreviated)
-            next_ul = next_element.find_next('ul')
-            if next_ul:
-                for li in next_ul.find_all('li'):
-                    venue = li.get_text(strip=True)
-                    venue_info = venue.split(', ')
-                    
-                    #venue name and city
-                    venue_name = venue_info[0]
-                    venue_city = venue_info[-1]
-                    full_venue_name = f"{venue_name, venue_city, state_abbreviated}"
-                    active_us_venues.append(full_venue_name)     
-        next_element = next_element.find_next()
-    return active_us_venues
-    """
 
 url = "https://en.wikipedia.org/wiki/List_of_horse_racing_venues"
 venues = scrape_wikipedia(url)
