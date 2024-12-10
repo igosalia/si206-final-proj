@@ -37,21 +37,30 @@ def scrape_wikipedia(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
 
+    print("Parsing HTML content")
     active_us_venues = []
     us_venues = soup.find('h2', id='United_States') #locate only active venues in US#
-    us_thoroughbred = us_venues.find_next('h3', id='Thoroughbred_racing_3')
-    print(us_venues, us_thoroughbred)
+    if us_venues is None:
+        print("Could not find United States section")
+        return []
+    print(f"Found United States section: {us_venues}")
 
     #go to next element in thoroughbred section
-    next_element = us_thoroughbred.find_next_sibling()
-    while next_element and next_element.name != 'h3':
+    next_element = us_venues.find_next()
+    while next_element:
+        if next_element.name == 'h2':
+            break
+        if next_element.name == 'h3' and 'Throughbred racing' in next_element.text:
+            print(f"found Thoroughbred section: {next_element}")
         if next_element.name == 'h4':
             state = next_element.get_text()
+            print(f"Found state: {state}")
         if next_element.name == 'ul':
             for li in next_element.find_all('li'):
                 venue = li.get_text()
+                print(f"Found venue: {venue}")
                 active_us_venues.append(f"{venue}, {state}")
-        next_element = next_element.find_next_sibling()
+        next_element = next_element.find_next()
     
     return active_us_venues
     """    print(next_element)
