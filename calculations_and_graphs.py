@@ -11,7 +11,11 @@ conn = sqlite3.connect(database_path)
 cur = conn.cursor()
 
 def main():
+    #weather calculations
     calculate_avg_temps()
+    calculate_avg_humidity()
+    calculate_avg_windspeed()
+    calculate_avg_visibility
 
 def calculate_avg_temps():
     for track in tracks:
@@ -25,6 +29,7 @@ def calculate_avg_temps():
             temp_sum = 0
             for temp in temps:
                 temp_sum += temp[0]
+            weather_tracks_map[track] = {}
             weather_tracks_map[track]["average_temp"] = temp_sum / num_days
 
         else:
@@ -44,6 +49,7 @@ def calculate_avg_humidity():
             hum_sum = 0
             for val in values:
                 hum_sum += val[0]
+            weather_tracks_map[track] = {}
             weather_tracks_map[track]["average_humidity"] = hum_sum / num_days
 
         else:
@@ -62,6 +68,7 @@ def calculate_avg_windspeed():
             wind_sum = 0
             for val in values:
                 wind_sum += val[0]
+            weather_tracks_map[track] = {}
             weather_tracks_map[track]["average_windspeed"] = wind_sum / num_days
 
         else:
