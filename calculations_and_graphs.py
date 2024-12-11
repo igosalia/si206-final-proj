@@ -14,9 +14,7 @@ def main():
     calculate_avg_temps()
 
 def calculate_avg_temps():
-    average_temps_by_race_track = {}
     for track in tracks:
-        sum = 0
         cur.execute("""
             SELECT temperature FROM weather
             WHERE track_name = ?
@@ -27,23 +25,64 @@ def calculate_avg_temps():
             temp_sum = 0
             for temp in temps:
                 temp_sum += temp[0]
-            average_temps_by_race_track[track] = temp_sum / num_days
+            weather_tracks_map[track]["average_temp"] = temp_sum / num_days
+
         else:
             "Error getting data for this location"
-
-        
+    
 
 def calculate_avg_humidity():
     #calculate average humidity at each major racing course in DB
-    pass
+    for track in tracks:
+        cur.execute("""
+            SELECT humidity FROM weather
+            WHERE track_name = ?
+        """, (track,))
+        values = cur.fetchall()
+        num_days = len(values)
+        if num_days > 0:
+            hum_sum = 0
+            for val in values:
+                hum_sum += val[0]
+            weather_tracks_map[track]["average_humidity"] = hum_sum / num_days
+
+        else:
+            "Error getting data for this location"
 
 def calculate_avg_windspeed():
     #calculate average windspeed at each major racing course in DB
-    pass
+    for track in tracks:
+        cur.execute("""
+            SELECT windspeed FROM weather
+            WHERE track_name = ?
+        """, (track,))
+        values = cur.fetchall()
+        num_days = len(values)
+        if num_days > 0:
+            wind_sum = 0
+            for val in values:
+                wind_sum += val[0]
+            weather_tracks_map[track]["average_windspeed"] = wind_sum / num_days
+
+        else:
+            "Error getting data for this location"
 
 def calculate_avg_visibility():
     #calculate average visibility at each major racing course in DB
-    pass
+    for track in tracks:
+        cur.execute("""
+            SELECT visibility FROM weather
+            WHERE track_name = ?
+        """, (track,))
+        values = cur.fetchall()
+        num_days = len(values)
+        if num_days > 0:
+            vis_sum = 0
+            for val in values:
+                vis_sum += val[0]
+            weather_tracks_map[track]["average_windspeed"] = vis_sum / num_days
+        else:
+            "Error getting data for this location"
 
 def calculate_avg_race_pace():
     #calculate average race pace/times per mile at each racing course
