@@ -23,30 +23,39 @@ def create_db():
     """)
     conn.commit()
 
-    #racing API data tables
+    #racing data tables
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS racedata
-        (
-            raceid INTEGER PRIMARY KEY AUTOINCREMENT,
-            racetype VARCHAR(120),
-            location VARCHAR(120),
-            date DATETIME NOT NULL,
-            winner_name VARCHAR(150), 
-            racetime_minutes INTEGER
-        )
+            CREATE TABLE IF NOT EXISTS race_cards
+            (
+                raceid INTEGER PRIMARY KEY AUTOINCREMENT,
+                course VARCHAR(150), 
+                date VARCHAR(150), 
+                off_time VARCHAR(150), 
+                race_name VARCHAR(150),
+                distance VARCHAR(150),
+                region VARCHAR(150),
+                type VARCHAR(150),
+                track_condition VARCHAR(150),
+                surface_type VARCHAR(150)
+            )
     """)
+    conn.commit() 
 
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS race_track_info
-        (
-            raceid INTEGER, 
-            track_type VARCHAR(120),
-            track_name VARCHAR(150),
-            FOREIGN KEY(raceid) REFERENCES racedata(raceid) ON DELETE CASCADE
-        )
+            CREATE TABLE IF NOT EXISTS horse_info
+            (
+                raceid INTEGER,
+                horse_name VARCHAR(150),
+                horse_age VARCHAR(150),
+                region VARCHAR(150),
+                horse_weight VARCHAR(150),
+                horse_rating VARCHAR(150),
+                previous_performance VARCHAR(150),
+                FOREIGN KEY(raceid) REFERENCES race_cards(raceid) ON DELETE CASCADE
+            )
     """)
     conn.commit()
-    
+
     conn.close() #close connection after creating and committing each table creation
 
 if __name__ == "__main__":
