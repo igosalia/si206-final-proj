@@ -91,25 +91,7 @@ def calculate_avg_visibility():
         else:
             "Error getting data for this location"
 
-def calculate_avg_race_pace():
-    #calculate average race pace/times per mile at each racing course
-    pass
-
-def hypothesis_tests():
-    #hypothesis tests and correlation coefficients for each independent variable (temperature, humidity, visibility, etc)
-    pass
-
-def temp_vs_pace():
-    #create graph to compare temp and race pace/time
-    pass
-
-def windspeed_vs_pace():
-    #create graph to compare windspeed and race pace/time
-    pass
-
-def tracktype_vs_pace():
-    #create graph to compare track type to race pace
-    pass
+#TODO: Database Join calculation, more calculations and graphs
 
 if __name__ == "__main__":
     main()
