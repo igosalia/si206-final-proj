@@ -3,64 +3,39 @@ from bs4 import BeautifulSoup
 import sqlite3
 import re
 
-#weather API uses state abbreviations, matched here for consistency
-state_abbreviations = {
-    "Arizona": "AZ",
-    "Arkansas": "AR",
-    "California": "CA",
-    "Colorado": "CO",
-    "Delaware": "DE",
-    "Florida": "FL",
-    "Illinois": "IL",
-    "Indiana": "IN",
-    "Iowa": "IA",
-    "Kentucky": "KY",
-    "Louisiana": "LA",
-    "Maryland": "MD",
-    "Minnesota": "MN",
-    "Nebraska": "NE",
-    "New Jersey": "NJ",
-    "New Mexico": "NM",
-    "New York": "NY",
-    "North Dakota": "ND",
-    "Ohio": "OH",
-    "Oklahoma": "OK",
-    "Oregon": "OR",
-    "Pennsylvania": "PA",
-    "Texas": "TX",
-    "Virginia": "VA",
-    "Washington": "WA",
-    "West Virginia": "WV",
-    "Wyoming": "WY"
-}
-
 def scrape_wikipedia(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
 
-    active_us_venues = []
-    us_venues = soup.find('h2', id='United_States') #locate only active venues in US#
+    active_gb_venues = []
+    gb_venues = soup.find('h2', id='Great_Britain') #locate only active venues in GB#
 
     #go to next element in thoroughbred section
-    next_element = us_venues.find_next()
-    while next_element and ('Harness racing' not in next_element.text):
+    next_element = gb_venues.find_next()
+    while next_element:
         if next_element.name == 'h2':
             break
-        if next_element.name == 'h4':
-            state = next_element.get_text()
-            state_abbr = state_abbreviations.get(state, '')
+        if next_element.name == 'h3':
+            area = next_element.get_text()
         if next_element.name == 'ul':
             for li in next_element.find_all('li'):
-                pattern = r'\([^)]*\)|\[.*\]|Racetrack|Race.Course'
+                pattern = r'\([^)]*\)|\[.*\]|Racetrack|Race.Course|Racecourse'
                 venue = li.get_text()
+                if "flat" in venue.split(',')[-1].lower():
+                    venue = ','.join(venue.split(',')[:-1]).strip()
                 venue = re.sub(pattern, '', venue).split(", ")
-                if len(venue) >= 2:
+                if len(venue) >= 2 and len(venue) < 3:
                     venue_name = venue[0]
                     venue_city = venue[-1]
-                    active_us_venues.append(f"{venue_name}, {venue_city}, {state_abbr}, United States")
+                    active_gb_venues.append(f"{venue_name}, {venue_city}, {area}, GB")
+                elif len(venue) == 3:
+                    print(venue)
+                    venue_name = venue[0]
+                    venue_city = venue[1]
+                    active_gb_venues.append(f"{venue_name}, {venue_city}, {area}, GB")
         next_element = next_element.find_next()
     
-    return active_us_venues
+    return active_gb_venues
 
 url = "https://en.wikipedia.org/wiki/List_of_horse_racing_venues"
 venues = scrape_wikipedia(url)
