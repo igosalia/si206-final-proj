@@ -45,6 +45,11 @@ def linreg(x, y):
     slope, intercept = py.linalg.lstsq(A, y, rcond=None)[0]
     return slope, intercept
 
+def calculate_residuals(x, y, slope, intercept):
+    predicted_y = slope * x + intercept
+    residuals = y - predicted_y
+    return residuals
+
 def scatter_plot(x, y, x_label, y_label, title):
     plt.figure(figsize=(10, 6))
     plt.scatter(x, y, color='blue', alpha=0.5)
@@ -56,7 +61,17 @@ def scatter_plot(x, y, x_label, y_label, title):
     plt.title(title)
     plt.grid(True)
     plt.show()
+    return slope, intercept
 
+def residual_plot(x, y, residuals, x_label, title):
+    plt.figure(figsize=(10,6))
+    plt.scatter(x, residuals, color='blue', alpha=0.5)
+    plt.axhline(0, color='red', linewidth=2)
+    plt.xlabel(x_label)
+    plt.ylabel('Residuals')
+    plt.title(title)
+    plt.grid(True)
+    plt.show()
 
 
 tracks = ["Bangor-on-Dee", "Cheltenham", "Doncaster", "Southwell (AW)", "Cork", "Dundalk (AW)", "Meydan", "San Isidro", "Eagle Farm", "Deauville", "Newcastle", "Wolverhampton (AW)", "Fairyhouse"]
@@ -88,11 +103,21 @@ def main():
     visibility = data['visibility']
 
     #show scatterplots for regression with horse_ratings as dependent var
-    scatter_plot(temperatures, horse_ratings, 'Temperature', 'Horse Rating', 'Horse Rating vs Temperature')
-    scatter_plot(humidities, horse_ratings, 'Humidity', 'Horse Rating', 'Horse Rating vs Humidity')
-    scatter_plot(windspeed, horse_ratings, 'Windspeed', 'Horse Rating', 'Horse Rating vs Windspeed')
-    scatter_plot(visibility, horse_ratings, 'Visibility', 'Horse Rating', 'Horse Rating vs Visibility')
+    slope, intercept = scatter_plot(temperatures, horse_ratings, 'Temperature', 'Horse Rating', 'Horse Rating vs Temperature')
+    residuals = calculate_residuals(temperatures, horse_ratings, slope, intercept)
+    residual_plot(temperatures, horse_ratings, residuals, 'Temperature', 'Residuals of Horse Rating vs Temperature')
 
+    slope, intercept = scatter_plot(humidities, horse_ratings, 'Humidity', 'Horse Rating', 'Horse Rating vs Humidity')
+    residuals = calculate_residuals(humidities, horse_ratings, slope, intercept)
+    residual_plot(humidities, horse_ratings, residuals, 'Humidity', 'Residuals of Horse Rating vs Humidity')
+
+    slope, intercept = scatter_plot(windspeed, horse_ratings, 'Windspeed', 'Horse Rating', 'Horse Rating vs Windspeed')
+    residuals = calculate_residuals(windspeed, horse_ratings, slope, intercept)
+    residual_plot(windspeed, horse_ratings, residuals, 'Windspeed', 'Residuals of Horse Rating vs Windspeed')
+
+    slope, intercept = scatter_plot(visibility, horse_ratings, 'Visibility', 'Horse Rating', 'Horse Rating vs Visibility')
+    residuals = calculate_residuals(visibility, horse_ratings, slope, intercept)
+    residual_plot(visibility, horse_ratings, residuals, 'Visibility', 'Residuals of Horse Rating vs Visibility')
 
 if __name__ == "__main__":
     main()
