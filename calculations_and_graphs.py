@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as py
 import seaborn as sns
+import statsmodels.api as sm
 
 database_path = "weather_and_horse_race_data.db"
 
@@ -37,48 +38,62 @@ def calculate_weather_info(data):
 
     return weather_stats
 
-def linreg(x, y):
-    #linear regression 
-    x = py.array(x)
-    y = py.array(y)
-    A = py.vstack([x, py.ones(len(x))]).T
-    slope, intercept = py.linalg.lstsq(A, y, rcond=None)[0]
-    return slope, intercept
+def multiple_reg(x, y, x_label, y_label, title):
+    #multiple regression 
+    x = sm.add_constant(x)
+    model = sm.OLS(y, x).fit()
+    predictions = model.predict(x)
 
-def calculate_residuals(x, y, slope, intercept):
-    predicted_y = slope * x + intercept
-    residuals = y - predicted_y
-    return residuals
+    print(model.summary())
 
-def scatter_plot(x, y, x_label, y_label, title):
     plt.figure(figsize=(10, 6))
-    plt.scatter(x, y, color='blue', alpha=0.5)
-    slope, intercept = linreg(x, y) #call linreg
-    x_range = py.linspace(min(x), max(x), 100)
-    plt.plot(x_range, slope * x_range + intercept, color='red', linewidth=2)
-    plt.xlabel(x_label)
+
+    for i, label in enumerate(x_label):
+        plt.scatter(x.iloc[:, i + 1], y, label=label, alpha=0.5)   
+    
+    #regression line
+    plt.plot(x.index, predictions, color='red', linewidth=2, label='Regression Line')
+
+    plt.xlabel('Independent Variables')
     plt.ylabel(y_label)
     plt.title(title)
+    plt.legend()
     plt.grid(True)
     plt.show()
-    return slope, intercept
 
-def residual_plot(x, y, residuals, x_label, title):
-    plt.figure(figsize=(10,6))
-    plt.scatter(x, residuals, color='blue', alpha=0.5)
-    plt.axhline(0, color='red', linewidth=2)
-    plt.xlabel(x_label)
-    plt.ylabel('Residuals')
-    plt.title(title)
-    plt.grid(True)
-    plt.show()
+    return model
+
+def calculate_residuals(y, predictions):
+    residuals = y - predictions
+    return residuals
+
+def residual_plot(x, residuals, x_labels, title):
+    for label in x_labels:
+        plt.figure(figsize=(10, 6))
+        plt.scatter(x[label], residuals, alpha=0.5, label=f'Residuals vs {label}')  # Changed to x[label] to match the DataFrame column names
+        plt.axhline(0, color='red', linewidth=2)
+        plt.xlabel(label)
+        plt.ylabel('Residuals')
+        plt.title(f'{title} ({label})')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
 
 def histogram(data, column, title):
     plt.figure(figsize=(10, 6))
-    plt.hist(data[column], bins=20, color='blue', edgecolor='black', alpha=0.7)
+    plt.hist(data[column].dropna(), bins=20, color='blue', edgecolor='black', alpha=0.7)
     plt.title(title)
     plt.xlabel(column)
     plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()
+
+def scatter_plot(x, y, x_label, y_label, title):
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x, y, alpha=0.5, color='blue')
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
     plt.grid(True)
     plt.show()
 
@@ -89,61 +104,102 @@ def correlation_plot(data):
     plt.title('Correlation Matrix')
     plt.show()
 
+#def predict_race_outcomes(data, weather_stats): #predict GB races
+  #  conn = sqlite3.connect(database_path)
 
-tracks = ["Bangor-on-Dee", "Cheltenham", "Doncaster", "Southwell (AW)", "Cork", "Dundalk (AW)", "Meydan", "San Isidro", "Eagle Farm", "Deauville", "Newcastle", "Wolverhampton (AW)", "Fairyhouse"]
-weather_tracks_map = {}
+    #load wikipedia data
+  #  query = "SELECT venue FROM wikipedia"
+ #   wikipedia_data = pd.read_sql_query(query, conn)
+  #  conn.close()
 
-conn = sqlite3.connect(database_path)
-cur = conn.cursor()
+    #split data into course and location
+  #  wikipedia_data[['course', 'location']] = wikipedia_data['venue'].str.split(', ', expand=True, n=1)
+    
+    # trim white spaces from course names and locations
+  #  wikipedia_data['course'] = wikipedia_data['course'].str.strip()
+  #  wikipedia_data['location'] = wikipedia_data['location'].str.strip()
+   # weather_stats.index = weather_stats.index.str.strip()
+
+  #  gb_tracks = wikipedia_data.loc[wikipedia_data['location'].str.contains('GB'), 'course'].unique()
+   # gb_data = data[data['course'].isin(gb_tracks)]
+    
+  #  predictions = []
+   # for course in gb_tracks:
+  #      if course in weather_stats.index:
+ #           avg_temp = weather_stats.loc[course, 'average_temp']
+   #         avg_humidity = weather_stats.loc[course, 'average_humidity']
+  #          avg_windspeed = weather_stats.loc[course, 'average_windspeed']
+ #           avg_visibility = weather_stats.loc[course, 'average_visibility']
+ #       else:
+    #        avg_temp = avg_humidity = avg_windspeed = avg_visibility = py.nan
+
+        #dummy predictions
+  #      predicted_rating = py.nanmean([avg_temp, avg_humidity, avg_windspeed, avg_visibility])
+  #      predictions.append((course, predicted_rating))
+
+  #  return predictions 
+
+def write_stats_to_file(weather_stats, filename='calculated_stats.txt'):
+    with open(filename, 'w') as file:
+        file.write("Weather Statistics:\n")
+        file.write(weather_stats.to_string())
+        file.write("\n\n")
+
+###def write_predictions_to_file(predictions, filename='predictions.txt'):
+ #   with open(filename, 'w') as file:
+ #       file.write("Predicted Horse Ratings for Great Britain Tracks:\n")
+   #     for course, pred in predictions:
+   #         file.write(f"{course}: {pred:.2f}\n")
 
 def main():
-    #load data
+    # Load data
     data = load_data_from_db()
     print(data.head())
 
-    #convert relevant columns to numeric
+    # Convert relevant columns to numeric
     data[['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating']] = data[['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating']].apply(pd.to_numeric, errors='coerce')
 
-    #drop NA
+    # Drop NA
     data.dropna(subset=['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating'], inplace=True)
 
-    #weather calculations
+    # Weather calculations
     weather_stats = calculate_weather_info(data)
     print(weather_stats)
 
-    #data for scatterplots
-    horse_ratings = data['horse_rating']
-    temperatures = data['temperature']
-    humidities = data['humidity']
-    windspeed = data['windspeed']
-    visibility = data['visibility']
+    # Vars for regression
+    independent_vars = data[['temperature', 'humidity', 'windspeed', 'visibility']]
+    dependent_var = data['horse_rating']
 
-    #show scatterplots for regression with horse_ratings as dependent var
-    slope, intercept = scatter_plot(temperatures, horse_ratings, 'Temperature', 'Horse Rating', 'Horse Rating vs Temperature')
-    residuals = calculate_residuals(temperatures, horse_ratings, slope, intercept)
-    residual_plot(temperatures, residuals, 'Temperature', 'Residuals of Horse Rating vs Temperature')
+    # Multiple regression
+    model = multiple_reg(independent_vars, dependent_var, ['temperature', 'humidity', 'windspeed', 'visibility'], 'Horse Rating', 'Multiple Regression for Horse Rating vs Weather Conditions')  # Changed labels to match DataFrame column names
 
-    slope, intercept = scatter_plot(humidities, horse_ratings, 'Humidity', 'Horse Rating', 'Horse Rating vs Humidity')
-    residuals = calculate_residuals(humidities, horse_ratings, slope, intercept)
-    residual_plot(humidities, residuals, 'Humidity', 'Residuals of Horse Rating vs Humidity')
+    # Residuals
+    residuals = calculate_residuals(dependent_var, model.predict(sm.add_constant(independent_vars)))
+    residual_plot(independent_vars, residuals, ['temperature', 'humidity', 'windspeed', 'visibility'], 'Residuals of Horse Rating vs Weather Conditions')  # Changed labels to match DataFrame column names
 
-    slope, intercept = scatter_plot(windspeed, horse_ratings, 'Windspeed', 'Horse Rating', 'Horse Rating vs Windspeed')
-    residuals = calculate_residuals(windspeed, horse_ratings, slope, intercept)
-    residual_plot(windspeed, residuals, 'Windspeed', 'Residuals of Horse Rating vs Windspeed')
+    # Scatterplots to show relationships
+    scatter_plot(data['temperature'], data['horse_rating'], 'Temperature', 'Horse Rating', 'Horse Rating vs Temperature')
+    scatter_plot(data['humidity'], data['horse_rating'], 'Humidity', 'Horse Rating', 'Horse Rating vs Humidity')
+    scatter_plot(data['windspeed'], data['horse_rating'], 'Windspeed', 'Horse Rating', 'Horse Rating vs Windspeed')
+    scatter_plot(data['visibility'], data['horse_rating'], 'Visibility', 'Horse Rating', 'Horse Rating vs Visibility')
 
-    slope, intercept = scatter_plot(visibility, horse_ratings, 'Visibility', 'Horse Rating', 'Horse Rating vs Visibility')
-    residuals = calculate_residuals(visibility, horse_ratings, slope, intercept)
-    residual_plot(visibility, residuals, 'Visibility', 'Residuals of Horse Rating vs Visibility')
-
-    #histograms
+    # Histograms to show distributions
     histogram(data, 'temperature', 'Distribution of Temperature')
     histogram(data, 'humidity', 'Distribution of Humidity')
     histogram(data, 'windspeed', 'Distribution of Windspeed')
     histogram(data, 'visibility', 'Distribution of Visibility')
     histogram(data, 'horse_rating', 'Distribution of Horse Ratings')
 
-    #correlation plot
+    # Correlation plot
     correlation_plot(data)
+
+    # Predictions
+   # predictions = predict_race_outcomes(data, weather_stats)
+   # write_stats_to_file(weather_stats)
+    #write_predictions_to_file(predictions)
+   # print(predictions)
+
+   #write stats to file
 
 if __name__ == "__main__":
     main()
