@@ -73,6 +73,22 @@ def residual_plot(x, y, residuals, x_label, title):
     plt.grid(True)
     plt.show()
 
+def histogram(data, column, title):
+    plt.figure(figsize=(10, 6))
+    plt.hist(data[column], bins=20, color='blue', edgecolor='black', alpha=0.7)
+    plt.title(title)
+    plt.xlabel(column)
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()
+
+def correlation_plot(data):
+    plt.figure(figsize=(10, 8))
+    corr_matrix = data[['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating']].corr()
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
+    plt.title('Correlation Matrix')
+    plt.show()
+
 
 tracks = ["Bangor-on-Dee", "Cheltenham", "Doncaster", "Southwell (AW)", "Cork", "Dundalk (AW)", "Meydan", "San Isidro", "Eagle Farm", "Deauville", "Newcastle", "Wolverhampton (AW)", "Fairyhouse"]
 weather_tracks_map = {}
@@ -105,19 +121,29 @@ def main():
     #show scatterplots for regression with horse_ratings as dependent var
     slope, intercept = scatter_plot(temperatures, horse_ratings, 'Temperature', 'Horse Rating', 'Horse Rating vs Temperature')
     residuals = calculate_residuals(temperatures, horse_ratings, slope, intercept)
-    residual_plot(temperatures, horse_ratings, residuals, 'Temperature', 'Residuals of Horse Rating vs Temperature')
+    residual_plot(temperatures, residuals, 'Temperature', 'Residuals of Horse Rating vs Temperature')
 
     slope, intercept = scatter_plot(humidities, horse_ratings, 'Humidity', 'Horse Rating', 'Horse Rating vs Humidity')
     residuals = calculate_residuals(humidities, horse_ratings, slope, intercept)
-    residual_plot(humidities, horse_ratings, residuals, 'Humidity', 'Residuals of Horse Rating vs Humidity')
+    residual_plot(humidities, residuals, 'Humidity', 'Residuals of Horse Rating vs Humidity')
 
     slope, intercept = scatter_plot(windspeed, horse_ratings, 'Windspeed', 'Horse Rating', 'Horse Rating vs Windspeed')
     residuals = calculate_residuals(windspeed, horse_ratings, slope, intercept)
-    residual_plot(windspeed, horse_ratings, residuals, 'Windspeed', 'Residuals of Horse Rating vs Windspeed')
+    residual_plot(windspeed, residuals, 'Windspeed', 'Residuals of Horse Rating vs Windspeed')
 
     slope, intercept = scatter_plot(visibility, horse_ratings, 'Visibility', 'Horse Rating', 'Horse Rating vs Visibility')
     residuals = calculate_residuals(visibility, horse_ratings, slope, intercept)
-    residual_plot(visibility, horse_ratings, residuals, 'Visibility', 'Residuals of Horse Rating vs Visibility')
+    residual_plot(visibility, residuals, 'Visibility', 'Residuals of Horse Rating vs Visibility')
+
+    #histograms
+    histogram(data, 'temperature', 'Distribution of Temperature')
+    histogram(data, 'humidity', 'Distribution of Humidity')
+    histogram(data, 'windspeed', 'Distribution of Windspeed')
+    histogram(data, 'visibility', 'Distribution of Visibility')
+    histogram(data, 'horse_rating', 'Distribution of Horse Ratings')
+
+    #correlation plot
+    correlation_plot(data)
 
 if __name__ == "__main__":
     main()
