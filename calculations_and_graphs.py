@@ -1,8 +1,24 @@
 """Calculations using weather and racing data"""
 
 import sqlite3
+import pandas as pd
 
 database_path = "weather_and_horse_race_data.db"
+
+def load_data_from_db():
+    conn.sqlite3.connect(database_path)
+
+    #joining race_card, horse_info, and weather
+    query = """
+        SELECT rc.course, rc.date, hi.horse_name, hi.horse_age, hi.horse_rating, w.temperature, w.humidity, w.windspeed
+        FROM race_cards rc
+        JOIN horse_info hi ON rc.raceid = hi.raceid
+        JOIN weather w ON rc.course = w.track_name AND rc.data = w.date
+    """
+
+    data = pd.read_sql_query(query, conn)
+    conn.close
+    return data
 
 tracks = ["Arizona Downs", "Rillito Park", "Turf Paradise", "Oaklawn Park", "Sonoma County Fairgrounds", "Pleasanton", "Del Mar", "Fresno Race Track", "Los Alamitos", "Santa Anita Park", "Cal-Expo Race Track", "Humboldt County Fair", "Arapahoe Park", "Delaware Park", "Gulfstream Park", "Tampa Bay Downs", "Fairmount Park", "Hawthorne", "Horseshoe Indianapolis", "Prairie Meadows", "Churchill Downs", "Ellis Park", "Keeneland", "Kentucky Downs", "Turfway Park", "Delta Downs", "Evangeline Downs", "Fair Grounds", "Louisiana Downs", "Laurel Park", "Maryland State Fairgrounds", "Pimlico", "Canterbury Park", "Columbus Races", "Fonner Park", "Horsemen's Park", "Legacy Downs", "Meadowlands", "Monmouth Park", "Albuquerque Downs", "Ruidoso Downs", "Sunland Park", "SunRay Park", "Zia Park", "Aqueduct", "Belmont Park", "Finger Lakes Gaming and Race Track", "Saratoga", "North Dakota Horse Park", "Chippewa Downs", "Belterra Park", "Hollywood Gaming at Mahoning Valley", "Thistledown Racino", "Fair Meadows Race Track", "Remington Park", "Will Rogers Downs", "Grants Pass Downs", "Parx Casino and Racing", "Hollywood Casino at Penn National", "Presque Isle Downs", "Lone Star Park", "Retama Park", "Sam Houston Race Park", "Colonial Downs", "Emerald Downs", "Hollywood Casino at Charles Town Races", "Mountaineer Casino", "Wyoming Downs", "Sweetwater Downs", "Energy Downs"]
 weather_tracks_map = {}
@@ -11,6 +27,8 @@ conn = sqlite3.connect(database_path)
 cur = conn.cursor()
 
 def main():
+    #load data
+    
     #weather calculations
     calculate_avg_temps()
     calculate_avg_humidity()
