@@ -46,13 +46,15 @@ def linreg(x, y):
     return slope, intercept
 
 def scatter_plot(x, y, x_label, y_label, title):
-    plt.scatter(x, y, color='blue')
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x, y, color='blue', alpha=0.5)
     slope, intercept = linreg(x, y) #call linreg
     x_range = py.linspace(min(x), max(x), 100)
-    plt.plot(x_range, slope * x_range + intercept, color='red')
+    plt.plot(x_range, slope * x_range + intercept, color='red', linewidth=2)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
+    plt.grid(True)
     plt.show()
 
 
