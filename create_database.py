@@ -6,6 +6,16 @@ def create_db():
     conn = sqlite3.connect(database_path)
     #create tables for each of our APIs/websites:
 
+    #wikipedia table
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS wikipedia
+        (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            venue VARCHAR(255)
+        )
+    """)
+    conn.commit()
+
     #weather api table
     conn.execute("""
         CREATE TABLE IF NOT EXISTS weather
