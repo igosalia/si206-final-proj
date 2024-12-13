@@ -27,12 +27,13 @@ def scrape_wikipedia(url):
                 if len(venue) >= 2 and len(venue) < 3:
                     venue_name = venue[0]
                     venue_city = venue[-1]
-                    active_gb_venues.append(f"{venue_name}, {venue_city}, {area}, GB")
+                    location = f"{venue_city}, {area}, GB"
+                    active_gb_venues.append((venue_name, location))
                 elif len(venue) == 3:
                     print(venue)
                     venue_name = venue[0]
-                    venue_city = venue[1]
-                    active_gb_venues.append(f"{venue_name}, {venue_city}, {area}, GB")
+                    location = f"{venue_city}, {area}, GB"
+                    active_gb_venues.append((venue_name, location))
         next_element = next_element.find_next()
     
     return active_gb_venues
@@ -42,9 +43,16 @@ def save_wikipedia_data_to_db(venues):
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
-    venue_tuples = [(v,) for v in venues]
-    cur.executemany("INSERT INTO wikipedia (venue) VALUES (?)", venue_tuples)
-    conn.commit()
+    cur.execute("SELECT COUNT(*) FROM wikipedia")
+    existing_count = cur.fetchone()[0]
+
+    remaining_slots = 25 - existing_count
+
+    if remaining_slots > 0:
+        venues_to_insert = venues[:remaining_slots]
+        cur.executemany("INSERT INTO wikipedia (venue, location) VALUES (?, ?)", venues_to_insert)
+        conn.commit()
+
     conn.close()
 
 def main():
