@@ -19,7 +19,7 @@ Dep. Variable:           horse_rating   R-squared:                       0.169
 Model:                            OLS   Adj. R-squared:                  0.165
 Method:                 Least Squares   F-statistic:                     41.09
 Date:                Fri, 13 Dec 2024   Prob (F-statistic):           2.25e-31
-Time:                        13:01:53   Log-Likelihood:                -3792.4
+Time:                        13:16:55   Log-Likelihood:                -3792.4
 No. Observations:                 812   AIC:                             7595.
 Df Residuals:                     807   BIC:                             7618.
 Df Model:                           4                                         

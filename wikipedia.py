@@ -48,12 +48,6 @@ def save_wikipedia_data_to_db(venues):
     venues_to_insert = venues[int(existing_count):int(existing_count)+25]
     cur.executemany("INSERT INTO wikipedia (venue, location) VALUES (?, ?)", venues_to_insert)
     conn.commit()
-    # remaining_slots = 25 - existing_count
-
-    # if remaining_slots > 0:
-    #     venues_to_insert = venues[:remaining_slots]
-    #     cur.executemany("INSERT INTO wikipedia (venue, location) VALUES (?, ?)", venues_to_insert)
-    #     conn.commit()
 
     conn.close()
 

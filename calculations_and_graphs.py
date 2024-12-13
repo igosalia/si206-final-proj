@@ -105,41 +105,6 @@ def correlation_plot(data):
     plt.title('Correlation Matrix')
     plt.show()
 
-#def predict_race_outcomes(data, weather_stats): #predict GB races
-  #  conn = sqlite3.connect(database_path)
-
-    #load wikipedia data
-  #  query = "SELECT venue FROM wikipedia"
- #   wikipedia_data = pd.read_sql_query(query, conn)
-  #  conn.close()
-
-    #split data into course and location
-  #  wikipedia_data[['course', 'location']] = wikipedia_data['venue'].str.split(', ', expand=True, n=1)
-    
-    # trim white spaces from course names and locations
-  #  wikipedia_data['course'] = wikipedia_data['course'].str.strip()
-  #  wikipedia_data['location'] = wikipedia_data['location'].str.strip()
-   # weather_stats.index = weather_stats.index.str.strip()
-
-  #  gb_tracks = wikipedia_data.loc[wikipedia_data['location'].str.contains('GB'), 'course'].unique()
-   # gb_data = data[data['course'].isin(gb_tracks)]
-    
-  #  predictions = []
-   # for course in gb_tracks:
-  #      if course in weather_stats.index:
- #           avg_temp = weather_stats.loc[course, 'average_temp']
-   #         avg_humidity = weather_stats.loc[course, 'average_humidity']
-  #          avg_windspeed = weather_stats.loc[course, 'average_windspeed']
- #           avg_visibility = weather_stats.loc[course, 'average_visibility']
- #       else:
-    #        avg_temp = avg_humidity = avg_windspeed = avg_visibility = py.nan
-
-        #dummy predictions
-  #      predicted_rating = py.nanmean([avg_temp, avg_humidity, avg_windspeed, avg_visibility])
-  #      predictions.append((course, predicted_rating))
-
-  #  return predictions 
-
 def write_stats_to_file(weather_stats, filename='calculated_stats.txt'):
     with open(filename, 'w') as file:
         file.write("Weather Statistics:\n")
@@ -150,12 +115,6 @@ def write_regression_to_file(regression_summary, filename='calculated_stats.txt'
     with open(filename, 'a') as file:
         file.write('\n')
         file.write(regression_summary)
-
-###def write_predictions_to_file(predictions, filename='predictions.txt'):
- #   with open(filename, 'w') as file:
- #       file.write("Predicted Horse Ratings for Great Britain Tracks:\n")
-   #     for course, pred in predictions:
-   #         file.write(f"{course}: {pred:.2f}\n")
 
 def main():
     # Load data
@@ -199,14 +158,6 @@ def main():
 
     # Correlation plot
     correlation_plot(data)
-
-    # Predictions
-   # predictions = predict_race_outcomes(data, weather_stats)
-   # write_stats_to_file(weather_stats)
-    #write_predictions_to_file(predictions)
-   # print(predictions)
-
-   #write stats to file
    
 
 if __name__ == "__main__":
