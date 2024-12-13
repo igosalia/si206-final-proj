@@ -11,7 +11,8 @@ def create_db():
         CREATE TABLE IF NOT EXISTS wikipedia
         (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            venue VARCHAR(255)
+            venue VARCHAR(255),
+            location VARCHAR(255)
         )
     """)
     conn.commit()
