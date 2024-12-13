@@ -35,8 +35,6 @@ def make_api_requests():
     with open(race_cards_file, 'w') as f:
         json.dump(racecards, f)
 
-    #TODO: need to get saturdays racecards, api only lets us get racecards for today and tmr so will have to do this tmr
-
 def get_data():
     with open("racecards.json", 'r') as f:
         racecards_data = json.load(f)
@@ -50,7 +48,6 @@ def get_racecards():
 
     cur.execute("SELECT COUNT(*) FROM race_cards")
     idx = cur.fetchone()[0]
-    print(idx)
     for i in range(int(idx), min(int(idx)+25, len(racecards_data))):
         curr_card = racecards_data[i]
         conn.execute("""
@@ -102,11 +99,16 @@ def db_empty():
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM race_cards")
     count = cur.fetchone()[0]
-    print(count)
     if count == 0:
         make_api_requests()
 
 if __name__ == "__main__":
     db_empty()
     get_racecards()
-    #get_runners()
+
+    conn = sqlite3.connect(database_path)
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM race_cards")
+    count = cur.fetchone()[0]
+    if count > 100:
+        get_runners()
