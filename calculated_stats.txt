@@ -1,0 +1,45 @@
+Weather Statistics:
+                    average_temp  average_humidity  average_windspeed  average_visibility
+course                                                                                   
+Bangor-on-Dee          41.100000         94.200000           4.400000            7.900000
+Cheltenham             40.810484         91.170161           9.112903           10.549194
+Cork                   40.900000         86.900000          10.300000            8.400000
+Doncaster              42.069697         86.412121           9.182828           11.486869
+Dundalk (AW)           40.300000         86.700000           8.100000            8.000000
+Fairyhouse             40.100000         88.900000          13.200000           14.800000
+Meydan                 73.800000         49.400000          11.400000            6.900000
+Newcastle              40.100000         84.100000          12.100000           15.000000
+Southwell (AW)         41.169091         89.649091           8.141818           11.414545
+Wolverhampton (AW)     40.600000         84.500000           7.800000           15.000000
+
+
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:           horse_rating   R-squared:                       0.169
+Model:                            OLS   Adj. R-squared:                  0.165
+Method:                 Least Squares   F-statistic:                     41.09
+Date:                Fri, 13 Dec 2024   Prob (F-statistic):           2.25e-31
+Time:                        13:01:53   Log-Likelihood:                -3792.4
+No. Observations:                 812   AIC:                             7595.
+Df Residuals:                     807   BIC:                             7618.
+Df Model:                           4                                         
+Covariance Type:            nonrobust                                         
+===============================================================================
+                  coef    std err          t      P>|t|      [0.025      0.975]
+-------------------------------------------------------------------------------
+const        -427.7210     51.076     -8.374      0.000    -527.978    -327.464
+temperature     3.7333      0.437      8.539      0.000       2.875       4.592
+humidity        3.5981      0.328     10.957      0.000       2.954       4.243
+windspeed       4.1081      0.525      7.832      0.000       3.078       5.138
+visibility      1.2181      0.479      2.546      0.011       0.279       2.157
+==============================================================================
+Omnibus:                       41.366   Durbin-Watson:                   0.126
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               31.618
+Skew:                           0.389   Prob(JB):                     1.36e-07
+Kurtosis:                       2.425   Cond. No.                     5.46e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 5.46e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.

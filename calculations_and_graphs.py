@@ -45,6 +45,7 @@ def multiple_reg(x, y, x_label, y_label, title):
     predictions = model.predict(x)
 
     print(model.summary())
+    write_regression_to_file(model.summary().as_text())
 
     plt.figure(figsize=(10, 6))
 
@@ -145,6 +146,11 @@ def write_stats_to_file(weather_stats, filename='calculated_stats.txt'):
         file.write(weather_stats.to_string())
         file.write("\n\n")
 
+def write_regression_to_file(regression_summary, filename='calculated_stats.txt'):
+    with open(filename, 'a') as file:
+        file.write('\n')
+        file.write(regression_summary)
+
 ###def write_predictions_to_file(predictions, filename='predictions.txt'):
  #   with open(filename, 'w') as file:
  #       file.write("Predicted Horse Ratings for Great Britain Tracks:\n")
@@ -164,6 +170,7 @@ def main():
 
     # Weather calculations
     weather_stats = calculate_weather_info(data)
+    write_stats_to_file(weather_stats)
     print(weather_stats)
 
     # Vars for regression
@@ -200,6 +207,7 @@ def main():
    # print(predictions)
 
    #write stats to file
+   
 
 if __name__ == "__main__":
     main()

@@ -35,7 +35,7 @@ def scrape_wikipedia(url):
                     location = f"{venue_city}, {area}, GB"
                     active_gb_venues.append((venue_name, location))
         next_element = next_element.find_next()
-    
+    print(len(active_gb_venues))
     return active_gb_venues
 
 def save_wikipedia_data_to_db(venues):
@@ -45,13 +45,15 @@ def save_wikipedia_data_to_db(venues):
 
     cur.execute("SELECT COUNT(*) FROM wikipedia")
     existing_count = cur.fetchone()[0]
+    venues_to_insert = venues[int(existing_count):int(existing_count)+25]
+    cur.executemany("INSERT INTO wikipedia (venue, location) VALUES (?, ?)", venues_to_insert)
+    conn.commit()
+    # remaining_slots = 25 - existing_count
 
-    remaining_slots = 25 - existing_count
-
-    if remaining_slots > 0:
-        venues_to_insert = venues[:remaining_slots]
-        cur.executemany("INSERT INTO wikipedia (venue, location) VALUES (?, ?)", venues_to_insert)
-        conn.commit()
+    # if remaining_slots > 0:
+    #     venues_to_insert = venues[:remaining_slots]
+    #     cur.executemany("INSERT INTO wikipedia (venue, location) VALUES (?, ?)", venues_to_insert)
+    #     conn.commit()
 
     conn.close()
 
