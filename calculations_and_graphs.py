@@ -45,6 +45,15 @@ def linreg(x, y):
     slope, intercept = py.linalg.lstsq(A, y, rcond=None)[0]
     return slope, intercept
 
+def scatter_plot(x, y, x_label, y_label, title):
+    plt.scatter(x, y, color='blue')
+    slope, intercept = linreg(x, y) #call linreg
+    x_range = py.linspace(min(x), max(x), 100)
+    plt.plot(x_range, slope * x_range + intercept, color='red')
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.show()
 
 
 
@@ -59,9 +68,29 @@ def main():
     data = load_data_from_db()
     print(data.head())
 
+    #convert relevant columns to numeric
+    data[['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating']] = data[['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating']].apply(pd.to_numeric, errors='coerce')
+
+    #drop NA
+    data.dropna(subset=['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating'], inplace=True)
+
     #weather calculations
     weather_stats = calculate_weather_info(data)
     print(weather_stats)
+
+    #data for scatterplots
+    horse_ratings = data['horse_rating']
+    temperatures = data['temperature']
+    humidities = data['humidity']
+    windspeed = data['windspeed']
+    visibility = data['visibility']
+
+    #show scatterplots for regression with horse_ratings as dependent var
+    scatter_plot(temperatures, horse_ratings, 'Temperature', 'Horse Rating', 'Horse Rating vs Temperature')
+    scatter_plot(humidities, horse_ratings, 'Humidity', 'Horse Rating', 'Horse Rating vs Humidity')
+    scatter_plot(windspeed, horse_ratings, 'Windspeed', 'Horse Rating', 'Horse Rating vs Windspeed')
+    scatter_plot(visibility, horse_ratings, 'Visibility', 'Horse Rating', 'Horse Rating vs Visibility')
+
 
 if __name__ == "__main__":
     main()
