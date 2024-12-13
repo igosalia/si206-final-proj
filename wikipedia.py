@@ -37,8 +37,22 @@ def scrape_wikipedia(url):
     
     return active_gb_venues
 
-url = "https://en.wikipedia.org/wiki/List_of_horse_racing_venues"
-venues = scrape_wikipedia(url)
-print(len(venues))
-for venue in venues:
-    print(venue)
+def save_wikipedia_data_to_db(venues):
+    db_path = 'weather_and_horse_race_data.db'
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    venue_tuples = [(v,) for v in venues]
+    cur.executemany("INSERT INTO wikipedia (venue) VALUES (?)", venue_tuples)
+    conn.commit()
+    conn.close()
+
+def main():
+    url = "https://en.wikipedia.org/wiki/List_of_horse_racing_venues"
+    venues = scrape_wikipedia(url)
+    save_wikipedia_data_to_db(venues)
+    for venue in venues:
+        print(venue)
+
+if __name__ == "__main__":
+    main()
