@@ -1,8 +1,9 @@
 import sqlite3
 import requests
+from datetime import datetime
 
 database_path = "weather_and_horse_race_data.db"
-    
+
 def get_weather_data():
     conn = sqlite3.connect(database_path)
     cur = conn.cursor()
@@ -22,16 +23,31 @@ def get_weather_data():
         days = to_insert["days"]
         for day in days:
             location = to_insert["resolvedAddress"]
-            datetime = day["datetime"]
+
+            #convert date to unix timestamp
+            date = day["datetime"]
+            timestamp = int(datetime.strptime(date, '%Y-%m-%d').timestamp())
+
             temperature = day["temp"]
             dew = day["dew"]
             humidity = day["humidity"]
             windspeed = day["windspeed"]
             visibility = day["visibility"]
+            
+            cur.execute("""
+                SELECT id FROM course_names WHERE course_name = ?
+            """, (track_name,))
+            course_id = cur.fetchone()[0]
+
+            cur.execute("""
+                SELECT id FROM location_names WHERE location_name = ?
+            """, (location,))
+            location_id = cur.fetchone()[0]
+
             conn.execute("""
-             INSERT INTO weather (location, track_name, date, temperature, dew, humidity, windspeed, visibility)
+             INSERT INTO weather (location_id, course_id, date, temperature, dew, humidity, windspeed, visibility)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-             """, (location, track_name, datetime, temperature, dew, humidity, windspeed, visibility))
+             """, (location_id, course_id, timestamp, temperature, dew, humidity, windspeed, visibility))
             conn.commit()      
     else:
         print("Failed to get data")

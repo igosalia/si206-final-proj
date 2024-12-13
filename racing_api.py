@@ -2,6 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import sqlite3
 import json
+from datetime import datetime
 
 database_path = "weather_and_horse_race_data.db"
 racecards = []
@@ -50,10 +51,22 @@ def get_racecards():
     idx = cur.fetchone()[0]
     for i in range(int(idx), min(int(idx)+25, len(racecards_data))):
         curr_card = racecards_data[i]
+
+        #convert date to unix timestamp
+        date = curr_card["date"]
+        timestamp = int(datetime.strptime(date, '%Y-%m-%d').timestamp())
+
+        course = curr_card["course"]
+        cur.execute("""
+            SELECT id FROM course_names
+            WHERE course_name = ?
+        """, (course,))
+        course_id = cur.fetchone()[0]
+
         conn.execute("""
-            INSERT OR IGNORE INTO race_cards (course, date, off_time, race_name, distance, region, type, track_condition, surface_type)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (curr_card["course"], curr_card["date"], curr_card["off_time"], curr_card["race_name"], curr_card["distance_f"], curr_card["region"], curr_card["type"], curr_card["going"], curr_card["surface"]))
+            INSERT OR IGNORE INTO race_cards (course_id, date, off_time, race_name, distance)
+            VALUES (?, ?, ?, ?, ?)
+        """, (course_id, timestamp, curr_card["off_time"], curr_card["race_name"], curr_card["distance_f"]))
     conn.commit()
     
     conn.close()
@@ -68,9 +81,18 @@ def get_runners():
     for racecard in racecards_data:
         race_name = racecard["race_name"]
         cur.execute("""
+            SELECT id FROM course_names
+            WHERE course_name = ?
+        """, (racecard["course"],))
+        courseid = cur.fetchone()[0]
+
+        date = racecard["date"]
+        timestamp = int(datetime.strptime(date, '%Y-%m-%d').timestamp())
+
+        cur.execute("""
                 SELECT raceid FROM race_cards
-                WHERE course = ? AND race_name = ? AND date = ? AND off_time = ?
-        """, (racecard["course"], race_name, racecard["date"], racecard["off_time"]))
+                WHERE course_id = ? AND race_name = ? AND date = ? AND off_time = ?
+        """, (courseid, race_name, timestamp, racecard["off_time"]))
         raceid = cur.fetchone()[0]
         for i in range(len(racecard["runners"])):
             racecard["runners"][i]["raceid"] = raceid
@@ -82,9 +104,9 @@ def get_runners():
     for i in range(int(idx), min(int(idx) + 25, len(runners))):
         runner = runners[i]
         conn.execute("""
-            INSERT INTO horse_info (raceid, horse_name, horse_age, region, horse_weight, horse_rating, previous_performance)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (runner["raceid"], runner["horse"], runner["age"], runner["region"], runner["lbs"], runner["ofr"], runner["form"]))
+            INSERT INTO horse_info (raceid, horse_name, horse_age, horse_weight, horse_rating, previous_performance)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (runner["raceid"], runner["horse"], runner["age"], runner["lbs"], runner["ofr"], runner["form"]))
     conn.commit()
 
 def clear_db():

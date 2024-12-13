@@ -10,9 +10,9 @@ def create_db():
         CREATE TABLE IF NOT EXISTS weather
         (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            location VARCHAR(120),
-            track_name VARCHAR(150),
-            date DATETIME NOT NULL,
+            location_id INTEGER,
+            course_id INTEGER,
+            date INTEGER,
             temperature DECIMAL (4, 1),
             dew DECIMAL (4, 1),
             humidity DECIMAL (4, 1),
@@ -22,20 +22,35 @@ def create_db():
     """)
     conn.commit()
 
+    #so we dont store duplicate string data of the locations
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS location_names
+        (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            location_name VARCHAR(150)
+        )
+    """)
+    conn.commit()
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS course_names
+        (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            course_name VARCHAR(150)
+        )
+    """)
+    conn.commit()
+
     #racing data tables
     conn.execute("""
             CREATE TABLE IF NOT EXISTS race_cards
             (
                 raceid INTEGER PRIMARY KEY AUTOINCREMENT,
-                course VARCHAR(150), 
-                date VARCHAR(150), 
+                course_id INTEGER, 
+                date INTEGER, 
                 off_time VARCHAR(150), 
                 race_name VARCHAR(150),
-                distance VARCHAR(150),
-                region VARCHAR(150),
-                type VARCHAR(150),
-                track_condition VARCHAR(150),
-                surface_type VARCHAR(150)
+                distance VARCHAR(150)
             )
     """)
     conn.commit() 
@@ -46,7 +61,6 @@ def create_db():
                 raceid INTEGER,
                 horse_name VARCHAR(150),
                 horse_age VARCHAR(150),
-                region VARCHAR(150),
                 horse_weight VARCHAR(150),
                 horse_rating VARCHAR(150),
                 previous_performance VARCHAR(150),
@@ -57,5 +71,28 @@ def create_db():
 
     conn.close() #close connection after creating and committing each table creation
 
+def insert_locations_into_db():
+    locations = ["Bangor Isycoed, Wrexham, Wales, United Kingdom", "Cheltenham, England, United Kingdom", "Doncaster, England, United Kingdom", "Southwell, England, United Kingdom", "Cork, Ireland", "Dundalk, Ireland", "دبي, الإمارات العربية المتحدة", "Ciudad de Buenos Aires, Ciudad Autónoma de Buenos Aires, Argentina", "Ascot, QLD 4359, Australia", "Deauville, Normandie, France", "Newcastle upon Tyne, England, United Kingdom", "Wolverhampton, England, United Kingdom", "County Meath, Ireland"]
+    conn = sqlite3.connect(database_path)
+    for location in locations:
+        conn.execute("""
+            INSERT INTO location_names (location_name)
+            VALUES(?)
+        """, (location,))
+    conn.commit()
+
+def insert_courses_into_db():
+    courses = ["Bangor-on-Dee", "Cheltenham", "Doncaster", "Southwell (AW)", "Cork", "Dundalk (AW)", "Meydan", "San Isidro", "Eagle Farm", "Deauville", "Newcastle", "Wolverhampton (AW)", "Fairyhouse"]
+    conn = sqlite3.connect(database_path)
+    for course in courses:
+        conn.execute("""
+            INSERT INTO course_names (course_name)
+            VALUES(?)
+        """, (course,))
+    conn.commit()
+
+
 if __name__ == "__main__":
     create_db()
+    insert_locations_into_db()
+    insert_courses_into_db()

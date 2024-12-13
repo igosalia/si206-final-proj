@@ -14,20 +14,19 @@ def load_data_from_db():
 
     #joining race_card, horse_info, and weather
     query = """
-        SELECT rc.course, rc.date, hi.horse_name, hi.horse_age, hi.horse_weight,
+        SELECT rc.course_id, rc.date, hi.horse_name, hi.horse_age, hi.horse_weight,
         hi.horse_rating, w.temperature, w.humidity, w.windspeed, w.visibility
         FROM race_cards rc
         JOIN horse_info hi ON rc.raceid = hi.raceid
-        JOIN weather w ON rc.course = w.track_name AND rc.date = w.date
+        JOIN weather w ON rc.course_id = w.course_id AND rc.date = w.date
     """
-
     data = pd.read_sql_query(query, conn)
     conn.close()
     return data
 
 def calculate_weather_info(data):
     #group by track and calculate mean for each weather attr
-    weather_stats = data.groupby('course')[['temperature', 'humidity', 'windspeed', 'visibility']].mean()
+    weather_stats = data.groupby('course_id')[['temperature', 'humidity', 'windspeed', 'visibility']].mean()
     #add header to weather dataframe
     weather_stats.rename(columns={
         'temperature': 'average_temp',
