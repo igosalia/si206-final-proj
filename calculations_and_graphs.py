@@ -2,23 +2,40 @@
 
 import sqlite3
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as py
 
 database_path = "weather_and_horse_race_data.db"
 
 def load_data_from_db():
-    conn.sqlite3.connect(database_path)
+    conn = sqlite3.connect(database_path)
 
     #joining race_card, horse_info, and weather
     query = """
-        SELECT rc.course, rc.date, hi.horse_name, hi.horse_age, hi.horse_rating, w.temperature, w.humidity, w.windspeed
+        SELECT rc.course, rc.date, hi.horse_name, hi.horse_age, hi.horse_weight,
+        hi.horse_rating, w.temperature, w.humidity, w.windspeed, w.visibility
         FROM race_cards rc
         JOIN horse_info hi ON rc.raceid = hi.raceid
-        JOIN weather w ON rc.course = w.track_name AND rc.data = w.date
+        JOIN weather w ON rc.course = w.track_name AND rc.date = w.date
     """
 
     data = pd.read_sql_query(query, conn)
-    conn.close
+    conn.close()
     return data
+
+def calculate_weather_info(data):
+    #group by track and calculate mean for each weather attr
+    weather_stats = data.groupby('course')[['temperature', 'humidity', 'windspeed', 'visibility']].mean()
+    #add header to weather dataframe
+    weather_stats.rename(columns={
+        'temperature': 'average_temp',
+        'humidity' : 'average_humidity',
+        'windspeed' : 'average_windspeed',
+        'visibility' : 'average_visibility'
+    }, inplace=True)
+
+    return weather_stats
+
 
 tracks = ["Bangor-on-Dee", "Cheltenham", "Doncaster", "Southwell (AW)", "Cork", "Dundalk (AW)", "Meydan", "San Isidro", "Eagle Farm", "Deauville", "Newcastle", "Wolverhampton (AW)", "Fairyhouse"]
 weather_tracks_map = {}
@@ -28,12 +45,12 @@ cur = conn.cursor()
 
 def main():
     #load data
-    
+    data = load_data_from_db()
+    print(data.head())
+
     #weather calculations
-    calculate_avg_temps()
-    calculate_avg_humidity()
-    calculate_avg_windspeed()
-    calculate_avg_visibility
+    weather_stats = calculate_weather_info(data)
+    print(weather_stats)
 
 def calculate_avg_temps():
     for track in tracks:
