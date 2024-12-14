@@ -71,6 +71,7 @@ def create_db():
 
     conn.close() #close connection after creating and committing each table creation
 
+#Storing the locations of races on 12/13/2024 and 12/14/2024
 def insert_locations_into_db():
     locations = ["Bangor Isycoed, Wrexham, Wales, United Kingdom", "Cheltenham, England, United Kingdom", "Doncaster, England, United Kingdom", "Southwell, England, United Kingdom", "Cork, Ireland", "Dundalk, Ireland", "دبي, الإمارات العربية المتحدة", "Ciudad de Buenos Aires, Ciudad Autónoma de Buenos Aires, Argentina", "Ascot, QLD 4359, Australia", "Deauville, Normandie, France", "Newcastle upon Tyne, England, United Kingdom", "Wolverhampton, England, United Kingdom", "County Meath, Ireland"]
     conn = sqlite3.connect(database_path)

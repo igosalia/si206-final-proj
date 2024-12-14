@@ -3,6 +3,7 @@ from requests.auth import HTTPBasicAuth
 import sqlite3
 import json
 from datetime import datetime
+import os
 
 database_path = "weather_and_horse_race_data.db"
 racecards = []
@@ -116,16 +117,19 @@ def clear_db():
     conn.commit()
     conn.close()
 
-def db_empty():
-    conn = sqlite3.connect(database_path)
-    cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM race_cards")
-    count = cur.fetchone()[0]
-    if count == 0:
-        make_api_requests()
-
+def is_empty():
+    flag = False
+    if not os.path.exists("racecards.json"):
+        flag = True
+    else:
+        with open('racecards.json', 'r') as f:
+            data = json.load(f)
+            if not data:
+                flag = True
+    if flag == True:
+        make_api_requests() #If we have not already made API requests to get the racecards, run the make_api_requests function
 if __name__ == "__main__":
-    db_empty()
+    is_empty()
     get_racecards()
 
     conn = sqlite3.connect(database_path)

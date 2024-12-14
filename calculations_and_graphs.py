@@ -14,11 +14,11 @@ def load_data_from_db():
 
     #joining race_card, horse_info, and weather
     query = """
-        SELECT rc.course_id, rc.date, hi.horse_name, hi.horse_age, hi.horse_weight,
+        SELECT rc.course_id, hi.horse_name, hi.horse_age, hi.horse_weight,
         hi.horse_rating, w.temperature, w.humidity, w.windspeed, w.visibility
         FROM race_cards rc
         JOIN horse_info hi ON rc.raceid = hi.raceid
-        JOIN weather w ON rc.course_id = w.course_id AND rc.date = w.date
+        JOIN weather w ON rc.course_id = w.course_id
     """
     data = pd.read_sql_query(query, conn)
     conn.close()
