@@ -14,6 +14,9 @@ def get_weather_data():
     
     cur.execute("SELECT COUNT(*) FROM weather")
     curr_url_idx = cur.fetchone()[0] / 15
+    if(int(curr_url_idx) >= len(urls)):
+        print("All data has been loaded into database already")
+        return
     response = requests.get(urls[int(curr_url_idx)])
     
     track_name = track_names[int(curr_url_idx)]
