@@ -14,7 +14,7 @@ def load_data_from_db():
 
     #joining race_card, horse_info, and weather
     query = """
-        SELECT rc.course_id, hi.horse_name, hi.horse_age, hi.horse_weight,
+        SELECT rc.course_id, rc.date, hi.horse_name, hi.horse_age, hi.horse_weight,
         hi.horse_rating, w.temperature, w.humidity, w.windspeed, w.visibility
         FROM race_cards rc
         JOIN horse_info hi ON rc.raceid = hi.raceid
@@ -59,7 +59,9 @@ def multiple_reg(x, y, x_label, y_label, title):
     plt.title(title)
     plt.legend()
     plt.grid(True)
-    plt.show()
+    
+    plt.savefig("regression.png")
+    # plt.show()
 
     return model
 
@@ -77,7 +79,8 @@ def residual_plot(x, residuals, x_labels, title):
         plt.title(f'{title} ({label})')
         plt.legend()
         plt.grid(True)
-        plt.show()
+        # plt.show()
+        plt.savefig(f"residuals_{label}.png")
 
 def histogram(data, column, title):
     plt.figure(figsize=(10, 6))
@@ -86,7 +89,8 @@ def histogram(data, column, title):
     plt.xlabel(column)
     plt.ylabel('Frequency')
     plt.grid(True)
-    plt.show()
+    # plt.show()
+    plt.savefig(f"histogram_{column}.png")
 
 def scatter_plot(x, y, x_label, y_label, title):
     plt.figure(figsize=(10, 6))
@@ -95,14 +99,16 @@ def scatter_plot(x, y, x_label, y_label, title):
     plt.ylabel(y_label)
     plt.title(title)
     plt.grid(True)
-    plt.show()
+    # plt.show()
+    plt.savefig(f"{title}.png")
 
 def correlation_plot(data):
     plt.figure(figsize=(10, 8))
     corr_matrix = data[['temperature', 'humidity', 'windspeed', 'visibility', 'horse_rating']].corr()
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', square=True)
     plt.title('Correlation Matrix')
-    plt.show()
+    # plt.show()
+    plt.savefig("correlation_matrix.png")
 
 def write_stats_to_file(weather_stats, filename='calculated_stats.txt'):
     with open(filename, 'w') as file:

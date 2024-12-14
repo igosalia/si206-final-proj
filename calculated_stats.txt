@@ -1,45 +1,44 @@
 Weather Statistics:
            average_temp  average_humidity  average_windspeed  average_visibility
 course_id                                                                       
-1             40.360000         88.600000          13.960000           12.180000
-2             40.526667         89.473333          15.673333           12.426667
-3             41.146667         85.393333          13.460000           12.513333
-4             40.866667         87.953333          15.300000           12.553333
-5             41.226667         89.493333          13.033333           12.706667
-6             40.566667         86.213333          14.080000           12.820000
-7             71.406667         53.560000          14.060000           14.800000
-11            42.620000         79.713333          15.706667           12.040000
-12            40.526667         88.006667          13.813333           12.686667
-13            40.193333         87.673333          14.873333           12.800000
+1             41.900000         94.800000           6.000000            5.200000
+2             41.558065         91.436290           9.112903            9.286290
+3             42.354545         87.474747           9.077778           10.394949
+4             41.321818         90.390909           9.652727           10.043636
+5             41.700000         87.300000          10.300000            6.600000
+6             40.400000         87.900000           8.600000            5.700000
+11            40.000000         83.600000          11.400000           15.000000
+12            41.000000         85.200000           8.300000           15.000000
+13            40.200000         90.800000          12.800000           14.500000
 
 
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:           horse_rating   R-squared:                       0.019
-Model:                            OLS   Adj. R-squared:                  0.019
-Method:                 Least Squares   F-statistic:                     59.39
-Date:                Fri, 13 Dec 2024   Prob (F-statistic):           9.53e-50
-Time:                        16:07:35   Log-Likelihood:                -57898.
-No. Observations:               12180   AIC:                         1.158e+05
-Df Residuals:                   12175   BIC:                         1.158e+05
+Dep. Variable:           horse_rating   R-squared:                       0.204
+Model:                            OLS   Adj. R-squared:                  0.200
+Method:                 Least Squares   F-statistic:                     47.90
+Date:                Fri, 13 Dec 2024   Prob (F-statistic):           7.18e-36
+Time:                        16:42:51   Log-Likelihood:                -3509.0
+No. Observations:                 751   AIC:                             7028.
+Df Residuals:                     746   BIC:                             7051.
 Df Model:                           4                                         
 Covariance Type:            nonrobust                                         
 ===============================================================================
                   coef    std err          t      P>|t|      [0.025      0.975]
 -------------------------------------------------------------------------------
-const          64.1484      4.441     14.445      0.000      55.444      72.853
-temperature    -0.0715      0.034     -2.096      0.036      -0.138      -0.005
-humidity        0.3335      0.035      9.564      0.000       0.265       0.402
-windspeed       0.1490      0.044      3.413      0.001       0.063       0.235
-visibility      0.0450      0.085      0.529      0.597      -0.122       0.212
+const        -764.4697     63.331    -12.071      0.000    -888.799    -640.141
+temperature    16.0394      1.433     11.193      0.000      13.226      18.853
+humidity        1.7507      0.379      4.617      0.000       1.006       2.495
+windspeed       1.9529      0.681      2.866      0.004       0.615       3.291
+visibility      2.0982      0.384      5.466      0.000       1.345       2.852
 ==============================================================================
-Omnibus:                     2998.832   Durbin-Watson:                   0.013
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):              597.547
-Skew:                           0.200   Prob(JB):                    1.75e-130
-Kurtosis:                       1.991   Cond. No.                     1.70e+03
+Omnibus:                       55.929   Durbin-Watson:                   0.111
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               22.063
+Skew:                           0.166   Prob(JB):                     1.62e-05
+Kurtosis:                       2.229   Cond. No.                     6.64e+03
 ==============================================================================
 
 Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-[2] The condition number is large, 1.7e+03. This might indicate that there are
+[2] The condition number is large, 6.64e+03. This might indicate that there are
 strong multicollinearity or other numerical problems.
