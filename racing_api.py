@@ -110,13 +110,6 @@ def get_runners():
         """, (runner["raceid"], runner["horse"], runner["age"], runner["lbs"], runner["ofr"], runner["form"]))
     conn.commit()
 
-def clear_db():
-    conn = sqlite3.connect(database_path)
-    conn.execute("DELETE FROM race_cards")
-    conn.execute("DELETE FROM sqlite_sequence WHERE name = 'race_cards'")
-    conn.commit()
-    conn.close()
-
 def is_empty():
     flag = False
     if not os.path.exists("racecards.json"):
